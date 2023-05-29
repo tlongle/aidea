@@ -1,20 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MyTabs from './src/Chat';
+import ChatScreen from './src/Chat';
+import WelcomeForm from './src/WelcomeForm';
 
-export default function App() {
+const HomeStack = createNativeStackNavigator();
+const ChatStack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function TabsApp() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Tab.Navigator style={{ backgroundColor: 'black' }}>
+      <Tab.Screen
+      name="Home"
+      component={WelcomeForm}
+      />
+      <Tab.Screen name="Chat" component={ChatScreen} />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const App = () => {
+  return(
+    <NavigationContainer theme={DarkTheme} >
+      <TabsApp />
+   </NavigationContainer>
+  );
+};
+
+export default App;
