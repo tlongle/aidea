@@ -104,23 +104,18 @@ const Chat = () => {
       // Caso não funcione, dá um erro e o mesmo é mostrado na consola
     }
   };
+
+  return (
+    <GiftedChat
+      messages={messages}
+      onSend={handleSend}
+      user={{
+        _id: 1,
+        name: 'User',
+      }}
+    />
+  );
 };
 
-function ChatScreen( {navigation} ) {
-  return (
-      <GiftedChat
-        messages={messages}
-        onSend={handleSend}
-        user={{
-          _id: 1,
-          name: 'User',
-        }}
-        renderInputToolbar={styles.renderInputToolbar}
-        renderMessageText={styles.renderMessageText}
-        renderMessage={styles.renderMessage}
-        renderBubble={styles.renderBubble}
-      />
-    );
-}
 
 export default Chat;
