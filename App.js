@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
+<<<<<<< HEAD
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -23,6 +24,13 @@ const App = () => {
       </Tab.Navigator>
     </NavigationContainer>
   );
+=======
+import WelcomeForm from './src/WelcomeForm';
+import Chat from './src/Chat';
+
+const App = () => {
+  return <Chat />;
+>>>>>>> db45e07f9a9a06d5e4a102c1ee400020117f212f
 };
 
 export default App;
