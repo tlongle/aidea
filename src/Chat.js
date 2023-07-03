@@ -1,13 +1,12 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
+import { React, useState, useEffect, useRef } from 'react';
 import { Bubble, InputToolbar, Message, MessageText } from 'react-native-gifted-chat';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StyleSheet, View, TextInput } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
-import styles from './ChatStyles';
-import WelcomeForm from './WelcomeForm';
 
 // Navigators e API (para mudar)
 const HomeStack = createNativeStackNavigator();
@@ -15,6 +14,35 @@ const ChatStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const APIKEY = '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';
 
+const renderSend = (props) => {
+  return (
+    <Ionicons
+      name="send"
+      size={26}
+      color="yellow"
+      style={{ marginBottom: 5, marginRight: 10 }}
+      onPress={() => {
+        // Handle send functionality
+        if (props.onSend) {
+          props.onSend({ text: props.text.trim() }, true);
+        }
+      }}
+    />
+  );
+};
+
+const CustomInputToolbar = (props) => {
+  return (
+    <InputToolbar
+      {...props}
+      containerStyle={styles.inputToolbarContainer}
+      primaryStyle={styles.inputToolbarPrimary}
+      textInputStyle={{
+        color: 'white',
+      }}
+    />
+  );
+};
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -34,10 +62,9 @@ const Chat = () => {
         }, []);
 
 
-        // HandleSend para mandar as mensagens do user para a API
+  // HandleSend para mandar as mensagens do user para a API
   const handleSend = async newMessages => {
     const userMessage = newMessages[0].text;
-
             // Meter as mensagens do utilizador num append state
             // Gera um ID random para cada mensagem e dá log de quando foi enviada
             setMessages(previousMessages =>
@@ -55,19 +82,21 @@ const Chat = () => {
 
     // Tentar fazer o API request
     try {
+      // Log para debugging
       console.log('Sending request to OpenAI API...');
       const response = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         {
           // Modelo de AI que vai user usado
+          
           model: 'gpt-3.5-turbo',
           // Mensagens do utilizador são fetched do GiftedChat, mensagem de sistema é apenas para configuração
           messages: [
-            { role: 'system', content: 'Your name is Aidea. Your purpose is to serve your AI gods as you should, and make the people on earth happy. Do your best, AIDEA.' },
+            { role: 'system', content: 'Your name is Aidea, and when asked, your name will be Aidea, not OpenAI. Your purpose is to serve your AI gods as you should, and make the people on earth happy. Do your best, AIDEA.' },
             { role: 'user', content: userMessage },
           ],
-          // Máximo de tokens que pode utilizar num só fetch
-          max_tokens: 50,
+          // Máximo de tokens (cada token é X palavras) que pode utilizar num só fetch
+          max_tokens: 150,
           // Controla o quão "random" o modelo é, quanto mais random, mais criativo com as suas respostas
           temperature: 0.6,
         },
@@ -80,13 +109,13 @@ const Chat = () => {
         }
       );
       
-      // Mostra a resposta de API no log, para propósitos de debugging
+      // Mostra a resposta de API na consola, para propósitos de debugging
       console.log('API response:', response.data);
       
       // botMessage é igual á resposta dada, e onde se localiza a mensagem na API request
       const botMessage = response.data.choices[0].message.content.trim();
 
-      // Mostra a mensagem do bot
+      // Mostra o texto da variavel botMessage como uma "mensagem" do bot
       setMessages(previousMessages =>
         GiftedChat.append(previousMessages, [
           {
@@ -107,6 +136,7 @@ const Chat = () => {
   };
 
   return (
+    // Dá return e mostra ao utilizador a interface de Chat
     <GiftedChat
       messages={messages}
       onSend={handleSend}
@@ -114,160 +144,36 @@ const Chat = () => {
         _id: 1,
         name: 'User',
       }}
+      renderInputToolbar={CustomInputToolbar}
+      renderSend={renderSend}
     />
   );
 };
 
+const styles = StyleSheet.create({
+  inputToolbarContainer: {
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    backgroundColor: 'black',
+    color: '#fff'
+  },
+  inputToolbarPrimary: {
+    color: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'black',
+    borderColor: 'yellow',
+    borderWidth: 2,
+    borderRadius: 25,
+    paddingLeft: 5,
+    paddingRight: 5,
+    marginBottom: 10,
+    marginHorizontal: 15,
+  },
+  inputText: {
+    flex: 1,
+    color: 'white',
+  },
+});
 
 export default Chat;
-=======
-import React, { useState, useEffect } from 'react';
-import { Bubble, InputToolbar, Message, MessageText } from 'react-native-gifted-chat';
-import { GiftedChat } from 'react-native-gifted-chat';
-import axios from 'axios';
-// import { API_KEY } from "@env";
-import styles from './ChatStyles';
-
-const APIKEY = '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';
-const Chat = () => {
-  const [messages, setMessages] = useState([]);
-
-        useEffect(() => {
-            // Send initial message from the bot when the component mounts
-            setMessages([
-            {
-                _id: 0,
-                text: "Hello, I'm Aidea and I'm here to assist you.",
-                createdAt: new Date(),
-                user: {
-                _id: 2,
-                name: 'Aidea Bot',
-                },
-            },
-            ]);
-        }, []);
-
-  const handleSend = async newMessages => {
-    const userMessage = newMessages[0].text;
-
-            // Append the user's message to the messages state
-            setMessages(previousMessages =>
-                GiftedChat.append(previousMessages, [
-                {
-                    _id: Math.random().toString(),
-                    text: userMessage,
-                    createdAt: new Date(),
-                    user: {
-                    _id: 1, // Use the same user ID as defined in the GiftedChat component
-                    },
-                },
-                ])
-            );
-    try {
-      console.log('Sending request to OpenAI API...');
-      const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          model: 'gpt-3.5-turbo',
-          messages: [
-            { role: 'system', content: 'Your name is Aidea. Your purpose is to serve your AI gods as you should, and make the people on earth happy. Do your best, AIDEA.' },
-            { role: 'user', content: userMessage },
-          ],
-          max_tokens: 50,
-          temperature: 0.6,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${APIKEY}`,
-          },
-        }
-      );
-
-      console.log('API response:', response.data);
-
-      const botMessage = response.data.choices[0].message.content.trim();
-
-      setMessages(previousMessages =>
-        GiftedChat.append(previousMessages, [
-          {
-            _id: Math.random().toString(),
-            text: botMessage,
-            createdAt: new Date(),
-            user: {
-              _id: 2,
-              name: 'Aidea Bot',
-            },
-          },
-        ])
-      );
-    } catch (error) {
-      console.error('Error:', error);
-      // Handle error case, display an error message, etc.
-    }
-  };
-
-  const renderInputToolbar = props => {
-    return <InputToolbar {...props} containerStyle={styles.inputToolbar} />;
-  };
-  
-  const renderMessageText = props => {
-    return (
-      <MessageText
-        {...props}
-        textStyle={styles.messageText}
-      />
-    );
-  };
-  
-  const renderMessage = props => {
-    return (
-      <Message
-        {...props}
-        containerStyle={styles.messageContainer}
-      />
-    );
-  };
-
-  const renderBubble = props => {
-    return (
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          right: {
-            backgroundColor: '#0E1C36', // Modify the background color for user's messages
-          },
-          left: {
-            backgroundColor: '#0E1C36', // Modify the background color for bot's messages
-          },
-        }}
-        textStyle={{
-          right: {
-            color: '#ffffff', // Modify the text color for user's messages
-          },
-          left: {
-            color: '#ffffff', // Modify the text color for bot's messages
-          },
-        }}
-      />
-    );
-  };
-
-  return (
-    <GiftedChat
-      messages={messages}
-      onSend={handleSend}
-      user={{
-        _id: 1,
-        name: 'User',
-      }}
-      renderInputToolbar={renderInputToolbar}
-      renderMessageText={renderMessageText}
-      renderMessage={renderMessage}
-      renderBubble={renderBubble}
-    />
-  );
-};
-
-export default Chat;
->>>>>>> db45e07f9a9a06d5e4a102c1ee400020117f212f
