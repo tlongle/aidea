@@ -11,7 +11,6 @@ import { useFonts } from 'expo-font';
 import WelcomeForm from './src/WelcomeForm';
 import Chat from './src/Chat';
 import ImageForm from './src/ImageForm';
-import SettingsForm from './src/SettingsForm';
 import APIkeys from './src/APIkeys';
 import SplashScreen from './src/SplashScreen';
 
@@ -36,7 +35,6 @@ const App = () => {
                 } else if (route.name === 'API'){
                   iconName = 'key-outline';
                 }
-
                 return <Ionicons name={iconName} size={size} color={color} />;
               },
             })}

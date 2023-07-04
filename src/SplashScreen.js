@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, Button, Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Modal from 'react-native-modal';
-import * as Animatable from 'react-native-animatable';
+import { NavigationContainer, DarkTheme } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const SplashScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   const [hasConfigured, setHasConfigured] = useState(false);
+  const Tab = createBottomTabNavigator();
 
   useEffect(() => {
     const checkAPIKeys = async () => {
@@ -44,14 +45,13 @@ const SplashScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Animatable.Image
-        style={styles.logo}
+{ <Image source={{uri: '../assets/img/splashscreenimg.png'}}></Image>/*       <Animatable.Image
         animation="fadeIn"
         duration={1500}
         delay={500}
         onAnimationEnd={onAnimationEnd}
-        source={{ uri: '../assets/img/logo.PNG' }}
-      />
+        source={{ uri: '../assets/img/splashscreenimg.png' }}
+      /> */}
 
       {/* <Modal isVisible={showModal}>
         <View style={styles.modalContent}>
@@ -68,10 +68,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  logo: {
-    width: 200,
-    height: 200,
   },
   modalContent: {
     backgroundColor: 'white',
