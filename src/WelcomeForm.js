@@ -7,60 +7,39 @@ import { useNavigation, NavigationContainer } from '@react-navigation/native';
 
 const WelcomeForm = () => {
 
-  const handleChatCardPress = async () => {
-    const openAIKey = await AsyncStorage.getItem('OPENAI_KEY');
-    const sdKey = await AsyncStorage.getItem('SD_KEY');
+  const handleChatCardPress = () =>{
 
-    if (openAIKey && sdKey) {
-      // Redirect to the chat page
-      navigation.navigate('Chat');
-    } else {
-      // Redirect to the API page
-      navigation.navigate('API');
-    }
   };
+  const handleImageCardPress = () =>{
 
-  const handleImageCardPress = async () => {
-    const openAIKey = await AsyncStorage.getItem('OPENAI_KEY');
-    const sdKey = await AsyncStorage.getItem('SD_KEY');
-
-    if (openAIKey && sdKey) {
-      // Redirect to the text-to-image page
-      navigation.navigate('TextToImage');
-    } else {
-      // Display a modal or show an alert to prompt the user to go to the API page
-      // You can implement your own custom modal or alert logic here
-      alert('Please go to the API page to enter your API keys.');
-    }
   };
-
   return (
-  <NavigationContainer>
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.card} onPress={handleChatCardPress}>
-        <LinearGradient
-          colors={['orange', 'yellow']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradient}
-        >
-          <Ionicons name="chatbubble-outline" size={24} color="#FFFFFF" style={styles.icon} />
-          <Text style={styles.cardText}>Chat</Text>
-        </LinearGradient>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.card} onPress={handleImageCardPress}>
-        <LinearGradient
-          colors={['purple', 'pink']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradient}
-        >
-          <Ionicons name="image-outline" size={24} color="#FFFFFF" style={styles.icon} />
-          <Text style={styles.cardText}>Text-to-Image</Text>
-        </LinearGradient>
-      </TouchableOpacity>
-    </View>
-    </NavigationContainer>
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.card} onPress={handleChatCardPress}>
+            <LinearGradient
+              colors={['orange', 'yellow']}
+              start={{ x: 1, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.gradient}
+            >
+              <Ionicons name="chatbubble-outline" size={24} color="#FFFFFF" style={styles.icon} />
+              <Text style={styles.cardText}>Chat</Text>
+              <Text style={styles.cardSmallText}>Precisas de um assistente na ponta dos dedos? O chat da Aidea é para ti.</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.card} onPress={handleImageCardPress}>
+            <LinearGradient
+              colors={['purple', 'pink']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.gradient}
+            >
+              <Ionicons name="image-outline" size={24} color="#FFFFFF" style={styles.icon} />
+              <Text style={styles.cardText}>Text-to-Image</Text>
+              <Text style={styles.cardSmallText}>O teu artista pessoal, no teu bolso.</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
   );
 };
 
@@ -83,6 +62,11 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  cardSmallText:{
+    padding: 10,
+    fontSize: 12,
     color: '#FFFFFF',
   },
   icon: {

@@ -46,12 +46,11 @@ const App = () => {
               },
             }}
           >
-            <Tab.Screen name="Splash" component={SplashScreen} options={{ tabBarVisible: false }} />
             <Tab.Screen
               name="Home"
               component={WelcomeForm}
               options={{
-                title: 'Home',
+                title: '',
                 headerStyle: {
                   backgroundColor: 'black', // Set the background color of the header
                 },
@@ -66,7 +65,7 @@ const App = () => {
               name="Chat"
               component={Chat}
               options={{
-                title: 'Chat',
+                title: '',
                 headerStyle: {
                   backgroundColor: 'black', // Set the background color of the header
                 },
@@ -81,7 +80,7 @@ const App = () => {
               name="Image"
               component={ImageForm}
               options={{
-                title: 'Image',
+                title: '',
                 headerStyle: {
                   backgroundColor: 'black', // Set the background color of the header
                 },
@@ -92,7 +91,7 @@ const App = () => {
                 headerTitleAlign: 'center', // Set the alignment of the header title
               }}  
             />
-            <Tab.Screen name="API" component={APIkeys}/>
+            <Tab.Screen name="API" component={APIkeys} options={{title: ''}}/>
           </Tab.Navigator>
       </NavigationContainer>
   </PaperProvider>
