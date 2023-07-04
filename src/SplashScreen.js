@@ -50,7 +50,7 @@ const SplashScreen = ({ navigation }) => {
         duration={1500}
         delay={500}
         onAnimationEnd={onAnimationEnd}
-        source={{ uri: '../assets/img/logo.png' }}
+        source={{ uri: '../assets/img/logo.PNG' }}
       />
 
       {/* <Modal isVisible={showModal}>

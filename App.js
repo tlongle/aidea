@@ -33,8 +33,6 @@ const App = () => {
                   iconName = 'chatbubbles-outline';
                 } else if (route.name === 'Image') {
                   iconName = 'image-outline';
-                } else if (route.name === 'Settings') {
-                  iconName = 'settings-outline';
                 } else if (route.name === 'API'){
                   iconName = 'key-outline';
                 }
@@ -50,7 +48,7 @@ const App = () => {
               },
             }}
           >
-            <Tab.Screen name="Splash" component={SplashScreen} options={{ tabBarVisible: false, tabBarVisible: false }} />
+            <Tab.Screen name="Splash" component={SplashScreen} options={{ tabBarVisible: false }} />
             <Tab.Screen
               name="Home"
               component={WelcomeForm}
@@ -97,7 +95,6 @@ const App = () => {
               }}  
             />
             <Tab.Screen name="API" component={APIkeys}/>
-            <Tab.Screen name="Settings" component={SettingsForm} />
           </Tab.Navigator>
       </NavigationContainer>
   </PaperProvider>

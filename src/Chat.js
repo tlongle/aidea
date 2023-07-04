@@ -4,7 +4,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
@@ -31,6 +31,15 @@ const renderSend = (props) => {
   );
 };
 
+const renderAvatar = (props) => {
+  return (
+    <Image
+      source={{ uri: '../assets/img/logo.png' }}
+      style={{ width: 40, height: 40, borderRadius: 20 }}
+    />
+  );
+};
+
 const CustomInputToolbar = (props) => {
   return (
     <InputToolbar
@@ -51,7 +60,7 @@ const Chat = () => {
             setMessages([
             {
                 _id: 0,
-                text: "Hello, I'm Aidea and I'm here to assist you.",
+                text: "Olá, sou o Aidea, em que te posso ajudar?",
                 createdAt: new Date(),
                 user: {
                 _id: 2,
@@ -65,7 +74,7 @@ const Chat = () => {
   // HandleSend para mandar as mensagens do user para a API
   const handleSend = async newMessages => {
     const userMessage = newMessages[0].text;
-            // Meter as mensagens do utilizador num append state
+            // Meter as mensagens do utilizador na interface
             // Gera um ID random para cada mensagem e dá log de quando foi enviada
             setMessages(previousMessages =>
                 GiftedChat.append(previousMessages, [
@@ -88,15 +97,14 @@ const Chat = () => {
         'https://api.openai.com/v1/chat/completions',
         {
           // Modelo de AI que vai user usado
-          
           model: 'gpt-3.5-turbo',
           // Mensagens do utilizador são fetched do GiftedChat, mensagem de sistema é apenas para configuração
           messages: [
-            { role: 'system', content: 'Your name is Aidea, and when asked, your name will be Aidea, not OpenAI. Your purpose is to serve your AI gods as you should, and make the people on earth happy. Do your best, AIDEA.' },
+            { role: 'system', content: 'Your name is Aidea, and when asked, your name will be Aidea, not OpenAI or ChatGPT. Your job is to be the best AI assistant out there, even better than ChatGPT. Now, you take this prompt, and give me the most detailed answer you can. Be mindful that the programmer of this app is portuguese and the people using it are portuguese, so answer in portuguese. Prompt:' },
             { role: 'user', content: userMessage },
           ],
           // Máximo de tokens (cada token é X palavras) que pode utilizar num só fetch
-          max_tokens: 150,
+          max_tokens: 550,
           // Controla o quão "random" o modelo é, quanto mais random, mais criativo com as suas respostas
           temperature: 0.6,
         },
@@ -135,6 +143,20 @@ const Chat = () => {
     }
   };
 
+  const renderComposer = props => {
+    return (
+      <View style={styles.composerContainer}>
+        <TextInput
+          style={styles.composerInput}
+          placeholder="Escreva algo"
+          placeholderTextColor="#8a8a8a"
+          // Additional props for TextInput can be added here
+          {...props}
+        />
+      </View>
+    );
+  };
+
   return (
     // Dá return e mostra ao utilizador a interface de Chat
     <GiftedChat
@@ -146,6 +168,7 @@ const Chat = () => {
       }}
       renderInputToolbar={CustomInputToolbar}
       renderSend={renderSend}
+      renderAvatar={renderAvatar}
     />
   );
 };
@@ -155,7 +178,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderBottomWidth: 0,
     backgroundColor: 'black',
-    color: '#fff'
+    color: '#fff',
+    padding: 3,
   },
   inputToolbarPrimary: {
     color: '#fff',
