@@ -35,7 +35,7 @@ const renderAvatar = (props) => {
   return (
     <Image
       source={{ uri: '../assets/img/logo.png' }}
-      style={{ width: 40, height: 40, borderRadius: 20 }}
+      
     />
   );
 };
@@ -52,6 +52,7 @@ const CustomInputToolbar = (props) => {
     />
   );
 };
+
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
@@ -70,10 +71,16 @@ const Chat = () => {
             ]);
         }, []);
 
-
   // HandleSend para mandar as mensagens do user para a API
   const handleSend = async newMessages => {
     const userMessage = newMessages[0].text;
+            // Check if userMessage is empty or contains only whitespace
+            if (!userMessage || userMessage.trim().length === 0) {
+              // Handle the case where userMessage is empty or whitespace
+              console.log('Invalid message');
+              return;
+            }
+                      
             // Meter as mensagens do utilizador na interface
             // Gera um ID random para cada mensagem e dá log de quando foi enviada
             setMessages(previousMessages =>
@@ -89,6 +96,7 @@ const Chat = () => {
                 ])
             );
 
+
     // Tentar fazer o API request
     try {
       // Log para debugging
@@ -100,7 +108,7 @@ const Chat = () => {
           model: 'gpt-3.5-turbo',
           // Mensagens do utilizador são fetched do GiftedChat, mensagem de sistema é apenas para configuração
           messages: [
-            { role: 'system', content: 'Your name is Aidea, and when asked, your name will be Aidea, not OpenAI or ChatGPT. Your job is to be the best AI assistant out there, even better than ChatGPT. Now, you take this prompt, and give me the most detailed answer you can. Be mindful that the programmer of this app is portuguese and the people using it are portuguese, so answer in portuguese. Prompt:' },
+            { role: 'system', content: 'Your name is Aidea, and when asked, your name will be Aidea, not OpenAI or ChatGPT. Your job is to be the best AI assistant out there, even better than ChatGPT. Now, you take this prompt, and give me the most detailed answer you can. Be mindful that the programmer of this app is portuguese and the people using it are portuguese, so answer in portuguese. Keep your answer simple and concise. Prompt:' },
             { role: 'user', content: userMessage },
           ],
           // Máximo de tokens (cada token é X palavras) que pode utilizar num só fetch
@@ -143,23 +151,10 @@ const Chat = () => {
     }
   };
 
-  const renderComposer = props => {
-    return (
-      <View style={styles.composerContainer}>
-        <TextInput
-          style={styles.composerInput}
-          placeholder="Escreva algo"
-          placeholderTextColor="#8a8a8a"
-          // Additional props for TextInput can be added here
-          {...props}
-        />
-      </View>
-    );
-  };
-
   return (
     // Dá return e mostra ao utilizador a interface de Chat
     <GiftedChat
+      messagesContainerStyle={{marginTop: -20}}
       messages={messages}
       onSend={handleSend}
       user={{
