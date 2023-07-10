@@ -53,7 +53,7 @@ export default function App() {
       setLoading(true);
 
       if (!userInput) {
-        // Display placeholder image
+        // Mostra imagem "placeholder"
         setImageData(require('../assets/img/placeholder.png'));
         setLoading(false);
         return;
@@ -84,7 +84,7 @@ export default function App() {
       );
 
       if (!response.data.artifacts || !Array.isArray(response.data.artifacts)) {
-        throw new Error('Invalid response format');
+        throw new Error('Resposta inválida.');
       }
 
       const images = response.data.artifacts;
@@ -93,8 +93,8 @@ export default function App() {
       setImageData(imageData);
       setError(null);
     } catch (error) {
-      console.error('Error:', error);
-      setError('Failed to fetch image');
+      console.error('Erro:', error);
+      setError('Falha na busca da imagem.');
     } finally {
       setLoading(false);
     }
@@ -103,31 +103,32 @@ export default function App() {
 
   const saveImage = async () => {
     try {
-      const filename = 'image.png'; // Specify the desired filename
-      const mimetype = 'image/png'; // Specify the image mimetype
-      const base64 = imageData; // Pass the base64 image data
-      const { status } = await MediaLibrary.requestPermissionsAsync();
+      const filename = 'image.png'; // Especificar o nome do ficheiro
+      const mimetype = 'image/png'; // Especificar mimetype
+      const base64 = imageData; // Passar imageData para a variavel base64
+      const { status } = await MediaLibrary.requestPermissionsAsync(); // Pede permissoes ao utilizador para guardar ficheiros
+      // Se o utilizador der acesso:
       if (status !== 'granted') {
-        console.log('Media Library permission denied');
+        console.log('Permissoes negadas.');
         return;
       }
   
-      // Convert the base64 image data to a local file
+      // Converte a imagem em base64 para um ficheiro
       const fileUri = `${FileSystem.cacheDirectory}${filename}`;
       await FileSystem.writeAsStringAsync(fileUri, base64, {
         encoding: FileSystem.EncodingType.Base64,
       });
   
-      // Save the image to the media library
+      // Guarda esse ficheiro
       const asset = await MediaLibrary.createAssetAsync(fileUri);
       await MediaLibrary.createAlbumAsync('Aidea', asset, false);
   
-      // Delete the temporary file
+      // Apaga o ficheiro temporário
       await FileSystem.deleteAsync(fileUri);
   
-      console.log('Image saved successfully');
+      console.log('Imagem guardada com sucesso.');
     } catch (error) {
-      console.error('Error saving image:', error);
+      console.error('Erro a salvar a imagem:', error);
     }
   };
   
