@@ -1,66 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, StyleSheet, Button, Text} from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { openAIKey, sdKey } from './config';
+import { useFonts } from 'expo-font';
 
 const SplashScreen = ({ navigation }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [hasConfigured, setHasConfigured] = useState(false);
-  const Tab = createBottomTabNavigator();
 
-  useEffect(() => {
-    const checkAPIKeys = async () => {
-      try {
-        // Check if API keys are present in AsyncStorage
-        const openAIKey = await AsyncStorage.getItem('OPENAI_KEY');
-        const sdKey = await AsyncStorage.getItem('SD_KEY');
+  const handleGetStarted = async () => {
+    const openAIKey = await AsyncStorage.getItem('OPENAI_KEY');
+    const sdKey = await AsyncStorage.getItem('SD_KEY');
 
-        // Set the hasConfigured state based on the presence of API keys
-        setHasConfigured(openAIKey !== null && sdKey !== null);
-      } catch (error) {
-        console.error('Error checking API keys:', error);
-      }
-    };
-
-    checkAPIKeys();
-  }, []);
-
-  const onAnimationEnd = () => {
-    // Animation end event handler
-    if (!hasConfigured) {
-      // If API keys are not present, show the modal
-      setShowModal(true);
-    } else {
-      // If API keys are present, navigate to WelcomeForm
-      navigation.navigate('WelcomeForm');
+    if(openAIKey && sdKey){
+      navigation.navigate('Main');
+    } else{
+      navigation.navigate('API');
     }
   };
 
-  const handleConfigureApp = () => {
-    setShowModal(false);
-    navigation.navigate('API');
-  };
+  const [isLoading, setIsLoading] = useState(true);
+  const [fontsLoaded] = useFonts({
+    'Bela': require('../assets/fonts/Belanosima-Regular.ttf'),
+  });
 
-
-  return (
-    <View style={styles.container}>
-{ <Image source={{uri: '../assets/img/splashscreenimg.png'}}></Image>/*       <Animatable.Image
-        animation="fadeIn"
-        duration={1500}
-        delay={500}
-        onAnimationEnd={onAnimationEnd}
-        source={{ uri: '../assets/img/splashscreenimg.png' }}
-      /> */}
-
-      {/* <Modal isVisible={showModal}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalText}>Por favor configure as suas API Keys.</Text>
-          <Button title="Configurar" onPress={handleConfigureApp} />
-        </View>
-      </Modal> */}
-    </View>
-  );
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#000000" />
+      </View>
+    );
+  }else{
+    return (
+      <View style={styles.container}>
+        <Image source={require('../assets/img/splashscreenimg.png')} style={styles.image} />
+        <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
+          <Text style={styles.buttonText}>Entrar</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -78,6 +57,25 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 18,
     marginBottom: 10,
+  },
+  image:{
+    width:270,
+    height:270,
+    marginBottom: 250,
+  },
+  button:{
+    backgroundColor: 'yellow',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 20,
+    width:'50%',
+    marginTop: -150,
+  },
+  buttonText:{
+    color: 'black',
+    fontSize: 18,
+    fontFamily: 'Bela',
+    alignSelf: 'center',
   },
 });
 

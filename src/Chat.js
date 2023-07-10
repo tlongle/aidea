@@ -4,57 +4,24 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, View, TextInput, Image } from 'react-native';
+import { StyleSheet, View, Image, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
 import axios from 'axios';
+import Picker from 'react-native-picker';
+import { models } from './config_models';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CONFIG_KEYS } from './config';
 
 // Navigators e API (para mudar)
 const HomeStack = createNativeStackNavigator();
 const ChatStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-const APIKEY = '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';
-
-const renderSend = (props) => {
-  return (
-    <Ionicons
-      name="send"
-      size={26}
-      color="yellow"
-      style={{ marginBottom: 5, marginRight: 10 }}
-      onPress={() => {
-        // Handle send functionality
-        if (props.onSend) {
-          props.onSend({ text: props.text.trim() }, true);
-        }
-      }}
-    />
-  );
-};
-
-const renderAvatar = (props) => {
-  return (
-    <Image
-      source={{ uri: '../assets/img/logo.png' }}
-      
-    />
-  );
-};
-
-const CustomInputToolbar = (props) => {
-  return (
-    <InputToolbar
-      {...props}
-      containerStyle={styles.inputToolbarContainer}
-      primaryStyle={styles.inputToolbarPrimary}
-      textInputStyle={{
-        color: 'white',
-      }}
-    />
-  );
-};
-
 
 const Chat = () => {
+  const [fontsLoaded] = useFonts({
+    'Bela': require('../assets/fonts/Belanosima-Regular.ttf'),
+  });
   const [messages, setMessages] = useState([]);
         useEffect(() => {
             // Mandar mensagem inicial
@@ -73,6 +40,13 @@ const Chat = () => {
 
   // HandleSend para mandar as mensagens do user para a API
   const handleSend = async newMessages => {
+
+    const apiKey = await AsyncStorage.getItem('OPENAI_KEY');
+    if (!apiKey) {
+      console.log('API key not found');
+      return;
+    }
+    
     const userMessage = newMessages[0].text;
             // Check if userMessage is empty or contains only whitespace
             if (!userMessage || userMessage.trim().length === 0) {
@@ -120,7 +94,7 @@ const Chat = () => {
           // Headers da API
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${APIKEY}`,
+            Authorization: `Bearer ${apiKey}`,
           },
         }
       );
@@ -151,30 +125,101 @@ const Chat = () => {
     }
   };
 
+    return (
+      // Mostra ao utilizador a interface de Chat
+        <GiftedChat
+        messagesContainerStyle={{ fontFamily: 'Bela', marginTop: -20}}
+        messages={messages}
+        onSend={handleSend}
+        user={{
+          _id: 1,
+          name: 'User',
+        }}
+        renderInputToolbar={CustomInputToolbar}
+        renderSend={renderSend}
+        renderAvatar={renderAvatar}
+        renderBubble={renderBubble}
+      />
+      
+    );
+  }
+
+const renderSend = (props) => {
+    return (
+      <Ionicons
+        name="send"
+        size={26}
+        color="yellow"
+        style={{ marginBottom: 5, marginRight: 10 }}
+        onPress={() => {
+          // Handle send functionality
+          if (props.onSend) {
+            props.onSend({ text: props.text.trim() }, true);
+          }
+        }}
+      />
+    );
+};
+  
+const renderAvatar = (props) => {
+    return (
+      <Image
+        source={{ require: '../assets/img/logo.png' }}
+      />
+    );
+};
+  
+const CustomInputToolbar = (props) => {
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={styles.inputToolbarContainer}
+        primaryStyle={styles.inputToolbarPrimary}
+        textInputStyle={{
+          color: 'white',
+          fontFamily: 'Bela',
+        }}
+      />
+    );
+};
+
+const renderBubble = (props) => {
   return (
-    // Dá return e mostra ao utilizador a interface de Chat
-    <GiftedChat
-      messagesContainerStyle={{marginTop: -20}}
-      messages={messages}
-      onSend={handleSend}
-      user={{
-        _id: 1,
-        name: 'User',
+    <Bubble
+      {...props}
+      timeTextStyle={{
+        left:{color: 'black', fontFamily:'Bela',},
+        right:{color: 'black', fontFamily:'Bela',},
       }}
-      renderInputToolbar={CustomInputToolbar}
-      renderSend={renderSend}
-      renderAvatar={renderAvatar}
+      wrapperStyle={{
+        right: {
+          backgroundColor: 'yellow', // Change the background color of user sent messages
+        },
+      }}
+      textStyle={{
+        left: {
+          fontFamily: 'Bela',
+        },
+        right: {
+          color: 'black', // Change the text color of user sent messages
+          fontFamily: 'Bela', // Change the font for user sent messages
+        },
+      }}
     />
   );
 };
 
 const styles = StyleSheet.create({
+  container:{
+    fontFamily: 'Bela',
+  },
   inputToolbarContainer: {
     borderTopWidth: 0,
     borderBottomWidth: 0,
     backgroundColor: 'black',
     color: '#fff',
     padding: 3,
+    fontFamily: 'Bela',
   },
   inputToolbarPrimary: {
     color: '#fff',
@@ -188,10 +233,7 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     marginBottom: 10,
     marginHorizontal: 15,
-  },
-  inputText: {
-    flex: 1,
-    color: 'white',
+    fontFamily: 'Bela',
   },
 });
 

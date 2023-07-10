@@ -5,6 +5,6 @@ export let CONFIG_KEYS = {
   };
   
   // Set the initial values to null
-  export let openAIKey = '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';
+  export let openAIKey = null;
   export let sdKey = null;
   

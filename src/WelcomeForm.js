@@ -4,20 +4,25 @@ import { Ionicons } from '@expo/vector-icons';
 import {LinearGradient} from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, NavigationContainer } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
 
 const WelcomeForm = () => {
-
+  const [fontsLoaded] = useFonts({
+    'Bela': require('../assets/fonts/Belanosima-Regular.ttf'),
+  });
+  const navigation = useNavigation();
   const handleChatCardPress = () =>{
-
+    navigation.navigate("Chat");
   };
   const handleImageCardPress = () =>{
-
+    navigation.navigate("Image");
   };
+
   return (
         <View style={styles.container}>
           <TouchableOpacity style={styles.card} onPress={handleChatCardPress}>
             <LinearGradient
-              colors={['orange', 'yellow']}
+              colors={['yellow', 'orange']}
               start={{ x: 1, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.gradient}
@@ -61,13 +66,14 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 18,
-    fontWeight: 'bold',
     color: '#FFFFFF',
+    fontFamily: 'Bela',
   },
   cardSmallText:{
     padding: 10,
     fontSize: 12,
     color: '#FFFFFF',
+    fontFamily: 'Bela',
   },
   icon: {
     marginBottom: 8, // Adjust the spacing between icon and text

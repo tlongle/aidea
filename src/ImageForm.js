@@ -1,19 +1,54 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Button, Image, TextInput, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, Button, Image, TextInput, ActivityIndicator, TouchableOpacity, Platform, PermissionsAndroid } from 'react-native';
 import Constants from 'expo-constants';
 import axios from 'axios';
+import { imageModels } from './config_models';
+import ModalDropdown from 'react-native-modal-dropdown';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
+
+
 
 const API_HOST = 'https://api.stability.ai';
 const ENGINE_ID = 'stable-diffusion-v1-5';
-const API_KEY = 'sk-AdOwZZ9JR5ZyqVSXr7SWMox2UjZoWw57lm6TWu13VNQLboP9';
 
 export default function App() {
-  const [imageData, setImageData] = useState(null);
+  const [imageData, setImageData] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [userInput, setUserInput] = useState('');
+  const [selectedModel, setSelectedModel] = useState(imageModels[0]);
+  const showModelPicker = () => {
+    Picker.init({
+      pickerData: imageModels,
+      selectedValue: [selectedModel],
+      pickerTitleText: 'Select Model',
+      onPickerConfirm: (pickedValue) => {
+        handleModelSelection(pickedValue[0]);
+      },
+      onPickerCancel: () => {
+        console.log('Picker canceled');
+      },
+      onPickerSelect: () => {
+        console.log('Picker item selected');
+      },
+    });
+    Picker.show();
+  };
 
+  const handleModelSelection = (value) => {
+    setSelectedModel(value);
+    console.log('Selected Model:', value);
+  };
+  
   const fetchImage = async () => {
+    const apiKey = await AsyncStorage.getItem('SD_KEY');
+    if (!apiKey) {
+      console.log('API key not found');
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -36,13 +71,14 @@ export default function App() {
           height: 512,
           width: 512,
           samples: 1,
-          steps: 50,
+          steps: 38,
+          style_preset: selectedModel,
         },
         {
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            Authorization: `Bearer ${API_KEY}`,
+            Authorization: `Bearer ${apiKey}`,
           },
         }
       );
@@ -64,10 +100,41 @@ export default function App() {
     }
   };
 
+
+  const saveImage = async () => {
+    try {
+      const filename = 'image.png'; // Specify the desired filename
+      const mimetype = 'image/png'; // Specify the image mimetype
+      const base64 = imageData; // Pass the base64 image data
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== 'granted') {
+        console.log('Media Library permission denied');
+        return;
+      }
+  
+      // Convert the base64 image data to a local file
+      const fileUri = `${FileSystem.cacheDirectory}${filename}`;
+      await FileSystem.writeAsStringAsync(fileUri, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+  
+      // Save the image to the media library
+      const asset = await MediaLibrary.createAssetAsync(fileUri);
+      await MediaLibrary.createAlbumAsync('Aidea', asset, false);
+  
+      // Delete the temporary file
+      await FileSystem.deleteAsync(fileUri);
+  
+      console.log('Image saved successfully');
+    } catch (error) {
+      console.error('Error saving image:', error);
+    }
+  };
+  
+
   return (
     <View style={styles.container}>
       {/* <Image source={require('../assets/img/aidea.png')} style={styles.logo}/> */}
-      <Text style={styles.text}>Gerador de Imagens do AIdea</Text>
       <Text style={styles.text2}>Baseado no API: Stability.ai</Text>
       {loading ? (
         <ActivityIndicator style={styles.loader} size="large" color="white" />
@@ -80,10 +147,25 @@ export default function App() {
         style={styles.input}
         onChangeText={setUserInput}
         value={userInput}
-        placeholder="Enter your text"
+        placeholder="Insere a tua ideia..."
       />
-      <Button title="Gerar Imagem" onPress={fetchImage} />
       {error && <Text>{error}</Text>}
+      <View style={styles.dropdownContainer}>
+        <Text style={styles.labelText}>Model:</Text>
+        <ModalDropdown
+          style={styles.dropdown}
+          textStyle={styles.dropdownText}
+          dropdownStyle={styles.dropdownMenu}
+          dropdownTextStyle={styles.dropdownMenuItemText}
+          options={imageModels}
+          defaultValue={imageModels[0]}
+          onSelect={(index, value) => handleModelSelection(value)}
+        />
+      </View>
+      <TouchableOpacity onPress={fetchImage} style={styles.buttonGenerate}><Text style={styles.textButton}>Gerar Imagem</Text></TouchableOpacity>
+      {imageData && (
+        <TouchableOpacity onPress={saveImage} style={styles.buttonGenerate2}><Text style={styles.textButton2}>Guardar</Text></TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -126,21 +208,91 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     color: 'white',
+    fontFamily: 'Bela',
   },
   text: {
     color: 'white',
-    fontWeight: 'bold',
+    fontFamily: 'Bela',
     alignSelf: 'center',
     fontSize: 20,
   },
   text2: {
-    color: 'purple',
-    fontWeight: 'bold',
+    color: 'yellow',
     alignSelf: 'center',
     fontSize: 14,
+    fontFamily: 'Bela',
   },
   loader: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  dropdownContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginVertical: 10,
+    borderRadius: 10,
+    backgroundColor: 'black', // Black background
+    borderWidth: 2,
+    borderColor: 'yellow', // Yellow border
+    paddingHorizontal: 10,
+    fontFamily: 'Bela',
+  },
+  labelText: {
+    color: 'yellow',
+    marginRight: 10,
+    fontFamily: 'Bela',
+  },
+  dropdown: {
+    flex: 1,
+    paddingVertical: 10,
+    fontFamily: 'Bela',
+  },
+  dropdownText: {
+    color: 'yellow',
+    fontSize: 16,
+    fontFamily: 'Bela',
+  },
+  dropdownMenu: {
+    backgroundColor: 'black', // Black background for the dropdown menu
+  },
+
+  dropdownMenuItemText: {
+    color: 'black',
+    fontSize: 16,
+    fontFamily: 'Bela',
+  },
+  buttonGenerate:{
+    alignSelf: 'center',
+    width: 300,
+    height: 50,
+    backgroundColor: 'yellow',
+    color: 'yellow',
+    borderRadius: 20,
+    marginBottom: 150,
+    fontFamily: 'Bela',
+  },
+  textButton:{
+    alignSelf: 'center',
+    justifyContent: 'center',
+    marginTop: 14,
+    fontFamily: 'Bela',
+  },
+  buttonGenerate2:{
+    alignSelf: 'center',
+    width: 200,
+    height: 50,
+    backgroundColor: 'yellow',
+    color: 'yellow',
+    borderRadius: 20,
+    marginBottom: 50,
+    marginTop: -130,
+    fontFamily: 'Bela',
+  },
+  textButton2:{
+    alignSelf: 'center',
+    justifyContent: 'center',
+    marginTop: 14,
+    fontFamily: 'Bela',
   },
 });

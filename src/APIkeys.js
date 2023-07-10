@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TextInput, Button, StyleSheet } from 'react-native';
+import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { openAIKey, sdKey, CONFIG_KEYS } from './config';
+import { useFonts } from 'expo-font';
 
-export default function APIKeysPage() {
+export default function APIKeysPage({ navigation }) {
+  const [fontsLoaded] = useFonts({
+    'Bela': require('../assets/fonts/Belanosima-Regular.ttf'),
+  });
   const [openAIKeyValue, setOpenAIKeyValue] = useState('');
   const [sdKeyValue, setSDKeyValue] = useState('');
 
@@ -19,12 +23,10 @@ export default function APIKeysPage() {
 
       if (openAIStoredKey !== null) {
         setOpenAIKeyValue(openAIStoredKey);
-        openAIKey = openAIStoredKey;
       }
 
       if (sdStoredKey !== null) {
         setSDKeyValue(sdStoredKey);
-        sdKey = sdStoredKey;
       }
     } catch (error) {
       console.error('Error fetching API keys:', error);
@@ -33,16 +35,13 @@ export default function APIKeysPage() {
 
   const saveAPIKeys = async () => {
     try {
-      // Update the values of openAIKey and sdKey with the text from the input fields
-      openAIKey = openAIKeyValue;
-      sdKey = sdKeyValue;
-
       // Save the API keys to AsyncStorage
       await AsyncStorage.setItem(CONFIG_KEYS.OPENAI_KEY, openAIKeyValue);
       await AsyncStorage.setItem(CONFIG_KEYS.SD_KEY, sdKeyValue);
-
+      
       // Optionally, you can display a confirmation message
-      console.log('API keys saved:', openAIKey, sdKey);
+      console.log('API keys saved: openAI Key:'+ openAIKeyValue+','+'StableDiffusion key:' + sdKeyValue);
+      navigation.navigate('Main');
     } catch (error) {
       console.error('Error saving API keys:', error);
     }
@@ -50,10 +49,12 @@ export default function APIKeysPage() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.titleText}>Para poderes usar a app, precisas de duas API keys.</Text>
+      <Text style={styles.textUnderTitle}>Onde arranjo estas keys?</Text>
       <Text style={styles.text}>OpenAI API Key</Text>
       <TextInput
         style={styles.textinputs}
-        placeholder="Insert API Key here"
+        placeholder="Inserir API key aqui"
         onChangeText={setOpenAIKeyValue}
         value={openAIKeyValue}
       />
@@ -61,15 +62,16 @@ export default function APIKeysPage() {
       <Text style={styles.text}>StableDiffusion API Key</Text>
       <TextInput
         style={styles.textinputs}
-        placeholder="Insert API Key here"
+        placeholder="Inserir API key aqui"
         onChangeText={setSDKeyValue}
         value={sdKeyValue}
       />
 
-      <Button style={styles.button} title="Save API Keys" onPress={saveAPIKeys} />
+      <TouchableOpacity style={styles.button5} onPress={saveAPIKeys}><Text style={styles.buttonText5}>Guardar</Text></TouchableOpacity>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -80,8 +82,8 @@ const styles = StyleSheet.create({
   text: {
     color: 'white',
     fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 10,
+    fontFamily: 'Bela',
   },
   textinputs:{
     textAlign: 'center',
@@ -90,10 +92,49 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: 350,
     height: 40,
-    marginTop: 20,
-    marginBottom: 20,
+    fontFamily: 'Bela',
+    marginBottom: 10,
   },
-  button:{
-    marginTop: 50,
+  textUnderTitle:{
+    color: 'yellow',
+    fontSize: 20,
+    marginTop: -20,
+    marginBottom: 50,
+    fontFamily: 'Bela'
+  },
+  titleText:{
+    width: '75%',
+    textAlign: 'left',
+    color: 'white',
+    fontSize: 35,
+    marginBottom: 75,
+    fontFamily: 'Bela'
+  },
+  button5:{
+    alignSelf: 'center',
+    width: 300,
+    height: 50,
+    backgroundColor: 'yellow',
+    color: 'yellow',
+    borderRadius: 20,
+    marginBottom: 150,
+    fontFamily: 'Bela',
+  },
+  button5:{
+    alignSelf: 'center',
+    width: 300,
+    height: 50,
+    backgroundColor: 'yellow',
+    color: 'yellow',
+    borderRadius: 20,
+    marginTop: 20,
+    marginBottom: 150,
+    fontFamily: 'Bela',
+  },
+  buttonText5:{
+    alignSelf: 'center',
+    justifyContent: 'center',
+    marginTop: 14,
+    fontFamily: 'Bela',
   },
 });
