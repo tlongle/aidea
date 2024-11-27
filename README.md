@@ -1,7 +1,7 @@
 <p align="center">
     <img width="200" src="https://i.imgur.com/B30AYV2.png" alt="Material Bread logo">
 </p>
-<b><p align="center">Aidea</p></b>
+<b><h1 align="center">Aidea</h1></b>
 
 <p align="center">an open-source AI user-interface with a focus on mobile</p>
 
