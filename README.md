@@ -1,9 +1,9 @@
 ﻿# Aidea
-## an open-source AI platform made in React
+## an open-source AI user-interface with a focus on mobile
 
-Aidea is an open-source AI platform made in React Native and Expo, made especifically for Android and iOS devices.
+Aidea is an open-source AI mobile interface made in React Native and Expo.
 
-I made this project as my final school project called PAP (Projeto de Aptidão Profissional, Professional Aptitude Project).
+I made this project as my final school project (Projeto de Aptidão Profissional, Professional Aptitude Project).
 
 ## Functionality
 
