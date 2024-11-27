@@ -1,5 +1,5 @@
 ﻿# Aidea
-## an open-source AI user-interface with a focus on mobile
+# an open-source AI user-interface with a focus on mobile
 
 Aidea is an open-source AI mobile interface made in React Native and Expo.
 
