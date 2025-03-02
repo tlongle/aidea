@@ -3,13 +3,16 @@
 </p>
 <b><h1 align="center">Aidea</h1></b>
 
-<p align="center">an open-source AI user-interface with a focus on mobile</p>
+<p align="center">an open-source AI user-interface with a focus on mobile usage</p>
+
+<p align="center">Aidea 2.0 is under construction!</p>
 
 
 ## Functionality
 
 Aidea boasts a number of AI-based functionalities:
 
-a chat-like interface for text-to-text generation based on OpenAI's API;
-a text-to-image generation page based on the StabilityAI API;
-a screen for saving and configuring your API keys;
+- simple authentication using Supabase;
+- simple, chat-like interface for text-to-text AI generation based on API calls for various AI models;
+- text-to-image generation page based API calls for various AI models;
+- simple page for saving and managing your API keys;
