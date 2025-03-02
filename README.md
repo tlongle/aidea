@@ -5,7 +5,7 @@
 
 <p align="center">an open-source AI user-interface with a focus on mobile usage</p>
 
-<h2> align="center">Aidea 2.0 is under construction!</h2>
+<h2 align="center">Aidea 2.0 is under construction!</h2>
 
 
 ## Functionality
